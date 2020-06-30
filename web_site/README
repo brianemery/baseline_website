@@ -1,0 +1,11 @@
+The 'core' directory contains the html and files from the dashboard template.
+A few of these have been modified. The 'built_html' folder is all the html built
+with the build_website.m file.
+
+Contents of both of these directories go into the same folder on web2:
+
+ rsync -avr core/  web2:/var/www/vhosts2/hfradar.msi.ucsb.edu/public_html/comparisons_beta/
+
+and:
+
+rsync -avr built_html/  web2:/var/www/vhosts2/hfradar.msi.ucsb.edu/public_html/comparisons_beta/
