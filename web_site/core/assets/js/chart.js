@@ -42,7 +42,6 @@ function graph1(text) {
 	// Build
 	$('#container').highcharts('StockChart', {
 		chart: {
-			type: 'scatter',
 			plotBorderColor: 'black',
 			plotBorderWidth: 2,
 		},
@@ -54,7 +53,7 @@ function graph1(text) {
 			title: {
 				text: xAxisTitle
 			},
-			// minorTickInterval: 'auto',
+			minorTickInterval: 'auto',
 			// startOnTick: true,
 			// endOnTick: true
 		},
@@ -69,39 +68,14 @@ function graph1(text) {
 			enabled: true
 		},
 		rangeSelector: {
-			enabled: true
+			// enabled: true,
+			// selected: 2
 		},
 		navigator: {
 			enabled: false
 		},
 		rangeSelector: {
-			selected: 0,
-			buttons: [
-				{
-					type: 'week',
-					count: 1,
-					text: '1w'
-				},
-				{
-					type: 'month',
-					count: 1,
-					text: '1m'
-				},
-				{
-					type: 'month',
-					count: 3,
-					text: '3m'
-				},
-				{
-					type: 'year',
-					count: 1,
-					text: '1y'
-				},
-				{
-					type: 'all',
-					text: 'All'
-				}
-			]
+			selected: 1,
 		},
 		series: series
 	});
@@ -129,19 +103,19 @@ function graph2(text) {
 	});
 
 	series.push({
-        type: 'line',
-        name: 'Regression Line',
-        data: [[-53, -43], [56, 42]],
-        marker: {
-            enabled: false
-        },
-        states: {
-            hover: {
-                lineWidth: 0
-            }
-        },
-        enableMouseTracking: false
-    });
+		type: 'line',
+		name: 'Regression Line',
+		data: [[-53, -43], [56, 42]],
+		marker: {
+			enabled: false
+		},
+		states: {
+			hover: {
+				lineWidth: 0
+			}
+		},
+		enableMouseTracking: false
+	});
 
 	// Build
 	$('#container2').highcharts({
