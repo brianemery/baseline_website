@@ -47,8 +47,8 @@ class Graph {
 		data.forEach(line => {
 			let vals = line.split(',');
 			let time = new Date(vals[0]);
-			let val1 = parseFloat(vals[1]) || 0;
-			let val2 = parseFloat(vals[2]) || 0;
+			let val1 = parseFloat(vals[1]) || null;
+			let val2 = parseFloat(vals[2]) || null;
 
 			series[0].data.push([time, val1]);
 			series[1].data.push([time, val2]);
