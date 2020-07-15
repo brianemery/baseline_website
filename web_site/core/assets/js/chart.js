@@ -272,7 +272,7 @@ class Graph {
 		);
 
 		this.scatterPlot.setSubtitle({
-			text: `R<sup>2</sup> = ${ regressionData.r2.toFixed(2) } &nbsp;&nbsp;&nbsp; RMS = ${ Math.round(rms) } &nbsp;&nbsp;&nbsp; N = ${ regressionData.points.length }`,
+			text: `R<sup>2</sup> = ${ regressionData.r2.toFixed(2) } &nbsp;&nbsp;&nbsp; RMSD = ${ rms.toFixed(1) } cm/s &nbsp;&nbsp;&nbsp; N = ${ regressionData.points.length }`,
 			useHTML: true,
 		});
 	}
