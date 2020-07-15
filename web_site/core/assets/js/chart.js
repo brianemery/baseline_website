@@ -6,6 +6,7 @@ class Graph {
 		this.scatterPlot = null;
 		this.scatterData = [];
 		this.scatterTime = [];
+		this.scatterLegend = null;
 		[ this.timeSeriesContainer, this.scatterPlotContainer ] = containers;
 
 		fetch(dataUrl).then(async res => {
@@ -28,10 +29,18 @@ class Graph {
 			{
 				name: header[1],
 				data: [],
+				marker: {
+					enabled: true,
+					radius: 3
+				},
 			},
 			{
 				name: header[2],
 				data: [],
+				marker: {
+					enabled: true,
+					radius: 3
+				},
 			}
 		];
 
@@ -48,9 +57,9 @@ class Graph {
 
 		// Build
 		Highcharts.setOptions({
-		    lang:{
-		        rangeSelectorZoom: ''
-		    },
+			lang:{
+				rangeSelectorZoom: ''
+			},
 		});
 
 		this.timeSeries = Highcharts.stockChart(this.timeSeriesContainer, {
@@ -70,11 +79,11 @@ class Graph {
 					text: header[0]
 				},
 				dateTimeLabelFormats: {
-				    minute: '%l %p',
-				    day:    '%b %e',
-				    week:   '%b %e',
-				    month:  '%b \'%y',
-				    year:   '%Y'
+					minute: '%l %p',
+					day:	'%b %e',
+					week:   '%b %e',
+					month:  '%b \'%y',
+					year:   '%Y'
 				},
 				minorTickInterval: 'auto',
 				// startOnTick: true,
@@ -93,44 +102,44 @@ class Graph {
 			},
 			rangeSelector: {
 				// enabled: true,
-				selected: 0,
+				selected: 1,
 				buttons: [{
-	                type: 'day',
-	                count: 1,
-	                text: '1 Day',
-	                dataGrouping: {
-	                    forced: true,
-	                    units: [['minute', [1]]]
-	                }
-	            },{
-	                type: 'week',
-	                count: 1,
-	                text: '1 Week',
-	                dataGrouping: {
-	                    forced: true,
-	                    units: [['minute', [1]]]
-	                }
-	            },{
-	                type: 'month',
-	                count: 1,
-	                text: ' 1 Month ',
-	                dataGrouping: {
-	                    forced: true,
-	                    units: [['hour', [1]]]
-	                }
-	            },{
-	                type: 'month',
-	                count: 3,
-	                text: ' 3 Months ',
-	                dataGrouping: {
-	                    forced: true,
-	                    units: [['hour', [1]]]
-	                }
-	            }],
+					type: 'day',
+					count: 1,
+					text: '1 Day',
+					dataGrouping: {
+						forced: true,
+						units: [['minute', [1]]]
+					}
+				},{
+					type: 'week',
+					count: 1,
+					text: '1 Week',
+					dataGrouping: {
+						forced: true,
+						units: [['minute', [1]]]
+					}
+				},{
+					type: 'month',
+					count: 1,
+					text: ' 1 Month ',
+					dataGrouping: {
+						forced: true,
+						units: [['hour', [1]]]
+					}
+				},{
+					type: 'month',
+					count: 3,
+					text: ' 3 Months ',
+					dataGrouping: {
+						forced: true,
+						units: [['hour', [1]]]
+					}
+				}],
 
-	            buttonTheme: {
-	                width: 70,
-	            }
+				buttonTheme: {
+					width: 70,
+				}
 			},
 			navigator: {
 				enabled: false
@@ -169,24 +178,29 @@ class Graph {
 				name: 'Dataset1',
 				type: 'scatter',
 				turboThreshold: 0,
-				data: this.scatterData
+				data: this.scatterData,
+
+				marker: {
+					fillColor: '#00c1f3',
+					lineColor: '#89349a',
+					lineWidth: 2,
+				},
+			},
+			{
+				type: 'line',
+				name: 'Regression Line',
+				data: [],
+				marker: {
+					enabled: false
+				},
+				states: {
+					hover: {
+						lineWidth: 0
+					}
+				},
+				enableMouseTracking: false
 			}
 		];
-
-		series.push({
-			type: 'line',
-			name: 'Regression Line',
-			data: [[-53, -43], [56, 42]],
-			marker: {
-				enabled: false
-			},
-			states: {
-				hover: {
-					lineWidth: 0
-				}
-			},
-			enableMouseTracking: false
-		});
 
 
 		// Build
@@ -220,17 +234,47 @@ class Graph {
 			},
 			series: series
 		});
+
+
+		// Update regression data
+		this.updateRegression();
 	}
 
 	async onRedraw() {
 		let minDate = this.timeSeries.xAxis[0].min;
 		let maxDate = this.timeSeries.xAxis[0].max;
 
+		// Show visible points
 		this.scatterData.forEach((point, i) => {
 			point.visible = this.scatterTime[i] < maxDate && this.scatterTime[i] > minDate;
 		});
-
 		this.scatterPlot.series[0].setData(this.scatterData);
+
+		// Update regression data
+		this.updateRegression();
+	}
+
+	updateRegression() {
+		let data = this.scatterData.filter(point => point.visible).map(point => [point.x, point.y]);
+		let regressionData = regression('linear', data);
+		this.scatterPlot.series[1].setData(regressionData.points);
+
+		let avgY = data.reduce((total, num) => {
+			total = Array.isArray(total) ? total[1] : total;
+			return total + num[1];
+		}) / data.length;
+
+		let rms = Math.sqrt(
+			data.reduce((total, num) => {
+				total = Array.isArray(total) ? Math.pow(avgY - total[1], 2) : total;
+				return total + Math.pow(avgY - num[1], 2);
+			}) / data.length
+		);
+
+		this.scatterPlot.setSubtitle({
+			text: `R<sup>2</sup> = ${ regressionData.r2.toFixed(2) } &nbsp;&nbsp;&nbsp; RMS = ${ Math.round(rms) } &nbsp;&nbsp;&nbsp; N = ${ regressionData.points.length }`,
+			useHTML: true,
+		});
 	}
 }
 
