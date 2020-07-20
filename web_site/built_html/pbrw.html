@@ -24,6 +24,9 @@
     <!--  CSS for Demo Purpose, don't include it in your project     -->
     <!-- <link href="assets/css/demo.css" rel="stylesheet" /> -->
 
+    <!-- Chart and map styling -->
+    <link href="assets/css/chart.css" rel="stylesheet"/>
+
 
     <!--     Fonts and icons     -->
     <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -214,8 +217,11 @@
                                 <p class="category">info</p>
                             </div>
                             <div class="content">
-                            <div id="container1" style="height: 400px; min-width: 600px"></div>
-                            <div id="container2" style="height: 400px; max-width: 50%"></div>
+                            <div id="container1" class="time-plot"></div>
+                            <div class="horizontal">
+                                <div id="container2" class="scatter-plot"></div>
+                                <div id="map" class="map"></div>
+                            </div>
 
                             <!-- <img src="http://hfradar.msi.ucsb.edu/synthetic/XXXX/synth_ts_X.png" width="900"> -->
                             <img src="http://hfradar.msi.ucsb.edu/synthetic/PBRW/synth_ts_1.png" width="900">
@@ -251,6 +257,7 @@
 	<!-- Light Bootstrap Table DEMO methods, don't include it in your project! -->
 	<!-- <script src="assets/js/demo.js"></script> -->
 
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCKQvPzyzh86KWxZ0kt2iKfcMUoXBfVjxE" type="text/javascript"></script>
     <script src="https://code.highcharts.com/stock/highstock.js"></script>
     <script src="assets/js/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/regression/1.4.0/regression.min.js"></script>

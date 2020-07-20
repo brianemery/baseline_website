@@ -1,15 +1,21 @@
-const dataUrl = 'https://raw.githubusercontent.com/brianemery/baseline_website/master/test_data/test_series.csv';
+const chartDataUrl = 'https://raw.githubusercontent.com/brianemery/baseline_website/master/test_data/test_series.csv';
+const mapAxisUrl = 'https://raw.githubusercontent.com/brianemery/baseline_website/master/test_data/map_axis.csv';
+const siteMarkersUrl = 'https://raw.githubusercontent.com/brianemery/baseline_website/master/test_data/site_markers.csv';
 
 class Graph {
-	constructor(dataUrl, containers) {
+	constructor(urls, containers) {
 		this.timeSeries = null;
 		this.scatterPlot = null;
+		this.map = null;
+		this.infowindow = null;
 		this.scatterData = [];
 		this.scatterTime = [];
 		this.scatterLegend = null;
-		[ this.timeSeriesContainer, this.scatterPlotContainer ] = containers;
 
-		fetch(dataUrl).then(async res => {
+		let [ chartDataUrl, mapAxisUrl, siteMarkersUrl ] = urls;
+		[ this.timeSeriesContainer, this.scatterPlotContainer, this.mapContainer ] = containers;
+
+		fetch(chartDataUrl).then(async res => {
 			let text = await res.text();
 
 			let data = text.split('\n');
@@ -18,6 +24,36 @@ class Graph {
 
 			this.graphTimeSeries(data, header);
 			this.graphScatterPlot(data, header);
+		});
+
+		Promise.all([
+			fetch(mapAxisUrl),
+			fetch(siteMarkersUrl),
+		])
+		.then(async res => {
+			function getAxisRange(text) {
+				let axisRange = text.split('\n');
+				return axisRange[1].split(',').map(coord => parseFloat(coord));
+			}
+
+			function getMarkersData(text) {
+				let data = text.split('\n');
+				data.shift();
+				data.pop();
+				return data.map(d => {
+					let line = d.split(',');
+
+					return {
+						name: line[0],
+						lng: parseFloat(line[1]),
+						lat: parseFloat(line[2]),
+					};
+				});
+			}
+
+			let axisRange = getAxisRange(await res[0].text());
+			let markersData = getMarkersData(await res[1].text());
+			this.graphMapPlot(axisRange, markersData);
 		});
 	}
 
@@ -240,6 +276,31 @@ class Graph {
 		this.updateRegression();
 	}
 
+	graphMapPlot(axisRange, markersData) {
+		let [ minLng, maxLng, minLat, maxLat ] = axisRange;
+
+		this.map = new google.maps.Map(document.getElementById(this.mapContainer), {
+			center:new google.maps.LatLng((minLat + maxLat) / 2.0, (minLng + maxLng) / 2.0),
+			zoom: 7,
+			mapTypeId: google.maps.MapTypeId.TERRAIN
+		});
+
+		this.infowindow = new google.maps.InfoWindow();
+
+		for (let markerData of markersData) {
+			const marker = new google.maps.Marker({
+				position: {lat: markerData.lat, lng: markerData.lng},
+				map: this.map,
+				title: markerData.name,
+			});
+
+			google.maps.event.addListener(marker, 'click', () => {
+				this.infowindow.setContent(markerData.name);
+				this.infowindow.open(this.map, marker);
+			});
+		}
+	}
+
 	async onRedraw() {
 		let minDate = this.timeSeries.xAxis[0].min;
 		let maxDate = this.timeSeries.xAxis[0].max;
@@ -278,6 +339,4 @@ class Graph {
 	}
 }
 
-new Graph(dataUrl, ['container1', 'container2']);
-// new Graph(dataUrl, ['container3', 'container4']);
-// new Graph(dataUrl, ['container5', 'container6']);
+new Graph([chartDataUrl, mapAxisUrl, siteMarkersUrl], ['container1', 'container2', 'map']);
