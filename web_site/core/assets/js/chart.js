@@ -1,6 +1,25 @@
-const chartDataUrl = 'https://raw.githubusercontent.com/brianemery/baseline_website/master/test_data/test_series.csv';
+const seriesDataUrls = [
+	'https://raw.githubusercontent.com/brianemery/baseline_website/master/test_data/test_series01.csv',
+	'https://raw.githubusercontent.com/brianemery/baseline_website/master/test_data/test_series02.csv',
+	'https://raw.githubusercontent.com/brianemery/baseline_website/master/test_data/test_series03.csv',
+	'https://raw.githubusercontent.com/brianemery/baseline_website/master/test_data/test_series04.csv',
+	'https://raw.githubusercontent.com/brianemery/baseline_website/master/test_data/test_series05.csv',
+];
+
 const mapAxisUrl = 'https://raw.githubusercontent.com/brianemery/baseline_website/master/test_data/map_axis.csv';
-const siteMarkersUrl = 'https://raw.githubusercontent.com/brianemery/baseline_website/master/test_data/site_markers.csv';
+
+const mapDataUrls = [
+	'https://raw.githubusercontent.com/brianemery/baseline_website/master/test_data/lonlat01.csv',
+	'https://raw.githubusercontent.com/brianemery/baseline_website/master/test_data/lonlat02.csv',
+	'https://raw.githubusercontent.com/brianemery/baseline_website/master/test_data/lonlat03.csv',
+	'https://raw.githubusercontent.com/brianemery/baseline_website/master/test_data/lonlat04.csv',
+	'https://raw.githubusercontent.com/brianemery/baseline_website/master/test_data/lonlat05.csv',
+];
+
+function main() {
+	let graph = new Graph([seriesDataUrls, mapAxisUrl, mapDataUrls], ['container1', 'container2', 'map']);
+	console.log(graph);
+}
 
 class Graph {
 	constructor(urls, containers) {
@@ -8,63 +27,94 @@ class Graph {
 		this.scatterPlot = null;
 		this.map = null;
 		this.infowindow = null;
+
+		this.dataIndex = 0;
+		this.timeSeries1Data = [];
+		this.timeSeries2Data = [];
 		this.scatterData = [];
 		this.scatterTime = [];
+		this.mapData = [];
 		this.scatterLegend = null;
 
-		let [ chartDataUrl, mapAxisUrl, siteMarkersUrl ] = urls;
+		let [ seriesDataUrls, mapAxisUrl, mapDataUrls ] = urls;
 		[ this.timeSeriesContainer, this.scatterPlotContainer, this.mapContainer ] = containers;
 
-		fetch(chartDataUrl).then(async res => {
-			let text = await res.text();
+		Promise.all([
+			...seriesDataUrls.map(url => fetch(url)),
+		])
+		.then(async res => {
+			let header = [];
 
-			let data = text.split('\n');
-			let header = data.shift().split(',');
-			data.pop();
+			for (let i in res) {
+				let text = await res[i].text();
 
-			this.graphTimeSeries(data, header);
-			this.graphScatterPlot(data, header);
+				let data = text.split('\n');
+				header = data.shift().split(',');
+				data.pop();
+
+				this.timeSeries1Data[i] = [];
+				this.timeSeries2Data[i] = [];
+				this.scatterData[i] = [];
+				this.scatterTime[i] = [];
+
+				let index = 0;
+				data.forEach(line => {
+					let vals = line.split(',');
+					let time = new Date(vals[0]);
+					let x = parseFloat(vals[1]) || undefined;
+					let y = parseFloat(vals[2]) || undefined;
+
+					this.timeSeries1Data[i].push([time, x]);
+					this.timeSeries2Data[i].push([time, y]);
+
+					if (x != null && y != null) {
+
+						this.scatterData[i].push({
+							x: x,
+							y: y,
+							visible: true,
+						});
+
+						this.scatterTime[i][index++] = time;
+					}
+				});
+			}
+
+			this.graphTimeSeries(header);
+			this.graphScatterPlot(header);
 		});
 
 		Promise.all([
 			fetch(mapAxisUrl),
-			fetch(siteMarkersUrl),
+			...mapDataUrls.map(url => fetch(url)),
 		])
 		.then(async res => {
-			function getAxisRange(text) {
-				let axisRange = text.split('\n');
-				return axisRange[1].split(',').map(coord => parseFloat(coord));
-			}
+			let axisData = res.shift();
+			let axisRange = getAxisRange(await axisData.text());
 
-			function getMarkersData(text) {
+			for (let i in res) {
+				let text = await res[i].text();
+
 				let data = text.split('\n');
 				data.shift();
 				data.pop();
-				return data.map(d => {
-					let line = d.split(',');
 
-					return {
-						name: line[0],
-						lng: parseFloat(line[1]),
-						lat: parseFloat(line[2]),
-					};
-				});
+				let coord = getMarkersData(data);
+				this.mapData.push(...coord);
 			}
 
-			let axisRange = getAxisRange(await res[0].text());
-			let markersData = getMarkersData(await res[1].text());
-			this.graphMapPlot(axisRange, markersData);
+			this.graphMapPlot(axisRange);
 		});
 	}
 
-	graphTimeSeries(data, header) {
+	graphTimeSeries(header) {
 		let chartTitle = 'Time Series Plot';
 
 		// Parse
 		let series = [
 			{
 				name: header[1],
-				data: [],
+				data: this.timeSeries1Data[this.dataIndex],
 				marker: {
 					enabled: true,
 					radius: 3
@@ -72,23 +122,13 @@ class Graph {
 			},
 			{
 				name: header[2],
-				data: [],
+				data: this.timeSeries2Data[this.dataIndex],
 				marker: {
 					enabled: true,
 					radius: 3
 				},
 			}
 		];
-
-		data.forEach(line => {
-			let vals = line.split(',');
-			let time = new Date(vals[0]);
-			let val1 = parseFloat(vals[1]) || null;
-			let val2 = parseFloat(vals[2]) || null;
-
-			series[0].data.push([time, val1]);
-			series[1].data.push([time, val2]);
-		});
 
 
 		// Build
@@ -184,28 +224,15 @@ class Graph {
 		});
 	}
 
-	graphScatterPlot(data, header) {
+	graphScatterPlot(header) {
 		let chartTitle = 'Scatter Plot';
 
 		let minDate = this.timeSeries.xAxis[0].min;
 		let maxDate = this.timeSeries.xAxis[0].max;
-		let index = 0;
 
-		data.forEach(line => {
-			let vals = line.split(',');
-			let time = new Date(vals[0]);
-			let x = parseFloat(vals[1]) || undefined;
-			let y = parseFloat(vals[2]) || undefined;
-
-			if (x != null && y != null) {
-				this.scatterData.push({
-					x: x,
-					y: y,
-					visible: time < maxDate && time > minDate,
-				});
-
-				this.scatterTime[index++] = time;
-			}
+		this.scatterData[this.dataIndex].forEach((data, index) => {
+			let time = this.scatterTime[this.dataIndex][index];
+			data.visible = time < maxDate && time > minDate
 		});
 
 		// Parse
@@ -214,7 +241,7 @@ class Graph {
 				name: 'Dataset1',
 				type: 'scatter',
 				turboThreshold: 0,
-				data: this.scatterData,
+				data: [...this.scatterData[this.dataIndex]],
 
 				marker: {
 					fillColor: '#00c1f3',
@@ -276,27 +303,47 @@ class Graph {
 		this.updateRegression();
 	}
 
-	graphMapPlot(axisRange, markersData) {
+	graphMapPlot(axisRange) {
 		let [ minLng, maxLng, minLat, maxLat ] = axisRange;
 
 		this.map = new google.maps.Map(document.getElementById(this.mapContainer), {
 			center:new google.maps.LatLng((minLat + maxLat) / 2.0, (minLng + maxLng) / 2.0),
-			zoom: 7,
+			zoom: 9,
 			mapTypeId: google.maps.MapTypeId.TERRAIN
 		});
 
 		this.infowindow = new google.maps.InfoWindow();
 
-		for (let markerData of markersData) {
+
+		let rmsds = this.mapData.map(d => d.rmsd);
+		let min = Math.min(...rmsds);
+		let max = Math.max(...rmsds);
+
+		for (let i in this.mapData) {
+			let markerData = this.mapData[i];
+
 			const marker = new google.maps.Marker({
 				position: {lat: markerData.lat, lng: markerData.lng},
 				map: this.map,
-				title: markerData.name,
+				title: markerData.rmsd + '',
+				icon: {
+					path: google.maps.SymbolPath.CIRCLE,
+					scale: 8.5,
+					fillColor: percentToColor(markerData.rmsd, min, max),
+					fillOpacity: 1,
+					strokeWeight: 0
+				},
 			});
 
 			google.maps.event.addListener(marker, 'click', () => {
-				this.infowindow.setContent(markerData.name);
+				this.infowindow.setContent(markerData.rmsd + '');
 				this.infowindow.open(this.map, marker);
+
+				// Change data on marker click
+				console.log(i);
+				this.dataIndex = i;
+				this.timeSeries.series[0].setData(this.timeSeries1Data[this.dataIndex]);
+				this.timeSeries.series[1].setData(this.timeSeries2Data[this.dataIndex]);
 			});
 		}
 	}
@@ -306,17 +353,20 @@ class Graph {
 		let maxDate = this.timeSeries.xAxis[0].max;
 
 		// Show visible points
-		this.scatterData.forEach((point, i) => {
-			point.visible = this.scatterTime[i] < maxDate && this.scatterTime[i] > minDate;
+		this.scatterData[this.dataIndex].forEach((point, i) => {
+			point.visible = this.scatterTime[this.dataIndex][i].getTime() < maxDate && this.scatterTime[this.dataIndex][i].getTime() > minDate;
+			// console.log(this.scatterTime[this.dataIndex][i].getTime(), minDate, maxDate);
 		});
-		this.scatterPlot.series[0].setData(this.scatterData);
+		console.log(this.scatterData[0].length);
+
+		this.scatterPlot.series[0].setData(this.scatterData[this.dataIndex]);
 
 		// Update regression data
 		this.updateRegression();
 	}
 
 	updateRegression() {
-		let data = this.scatterData.filter(point => point.visible).map(point => [point.x, point.y]);
+		let data = this.scatterData[this.dataIndex].filter(point => point.visible).map(point => [point.x, point.y]);
 		let regressionData = regression('linear', data);
 		this.scatterPlot.series[1].setData(regressionData.points);
 
@@ -339,4 +389,31 @@ class Graph {
 	}
 }
 
-new Graph([chartDataUrl, mapAxisUrl, siteMarkersUrl], ['container1', 'container2', 'map']);
+
+function getAxisRange(text) {
+	let axisRange = text.split('\n');
+	return axisRange[1].split(',').map(coord => parseFloat(coord));
+}
+
+function getMarkersData(data) {
+	return data.map(d => {
+		let line = d.split(',');
+
+		return {
+			rmsd: parseFloat(line[2]),
+			lng: parseFloat(line[0]),
+			lat: parseFloat(line[1]),
+		};
+	});
+}
+
+function percentToColor(val, minVal, maxVal) {
+	let percent = 1 - (val - minVal) / (maxVal - minVal);
+
+	let min = 70;
+	let max = 70;
+	let blue = 140;
+	return `rgb(${ max * percent + min }, ${ max * percent + min }, ${ blue })`;
+}
+
+main();
