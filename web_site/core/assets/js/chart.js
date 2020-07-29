@@ -57,12 +57,18 @@ class Graph {
 				this.scatterData[i] = [];
 				this.scatterTime[i] = [];
 
-				let index = 0;
-				data.forEach(line => {
+				data = data.map(line => {
 					let vals = line.split(',');
-					let time = new Date(vals[0]);
+					let time = getDate(vals[0]);
 					let x = parseFloat(vals[1]) || undefined;
 					let y = parseFloat(vals[2]) || undefined;
+
+					return { time, x, y };
+				});
+
+				let index = 0;
+				data.forEach(item => {
+					let { time, x, y } = item;
 
 					this.timeSeries1Data[i].push([time, x]);
 					this.timeSeries2Data[i].push([time, y]);
@@ -414,6 +420,10 @@ function percentToColor(val, minVal, maxVal) {
 	let max = 70;
 	let blue = 140;
 	return `rgb(${ max * percent + min }, ${ max * percent + min }, ${ blue })`;
+}
+
+function getDate(str) {
+	return new Date(str.replace(/(.*)-(.*)-(.*) (.*)/, '$2 $1, 20$3 $4:00'));
 }
 
 main();
