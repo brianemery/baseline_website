@@ -1,20 +1,29 @@
 
-.horizontal {
-	display: flex;
+
+.section {
+	border-radius: 5px;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+	margin-bottom: 20px;
 }
 
-.time-plot {
-	height: 400px;
-	min-width: 600px;
-}
+	.time-plot {
+		height: 400px;
+		min-width: 600px;
+	}
 
-.scatter-plot {
-	height: 400px;
-	width: 50%;
-}
+		.horizontal {
+			display: flex;
+			justify-content: space-between;
+		}
 
-.map {
-	height: 320px;
-	width: 45%;
-	margin-left: 5%;
-}
+			.scatter-plot {
+				height: 400px;
+				width: 50%;
+			}
+
+			.map {
+				/*height: 320px;*/
+				width: 45%;
+				margin: 20px;
+				box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+			}

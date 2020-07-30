@@ -19,7 +19,7 @@ const mapDataUrls = [
 const siteMarkerUrl = 'https://raw.githubusercontent.com/brianemery/baseline_website/master/test_data/site_markers.csv';
 
 function main() {
-	let graph = new Graph([seriesDataUrls, mapAxisUrl, mapDataUrls, siteMarkerUrl], ['container1', 'container2', 'map']);
+	let graph = new Graph([seriesDataUrls, mapAxisUrl, mapDataUrls, siteMarkerUrl], ['section1', 'container1', 'container2', 'map']);
 	console.log(graph);
 }
 
@@ -39,7 +39,7 @@ class Graph {
 		this.scatterLegend = null;
 
 		let [ seriesDataUrls, mapAxisUrl, mapDataUrls, siteMarkerUrl ] = urls;
-		[ this.timeSeriesContainer, this.scatterPlotContainer, this.mapContainer ] = containers;
+		[ this.sectionContainer, this.timeSeriesContainer, this.scatterPlotContainer, this.mapContainer ] = containers;
 
 		Promise.all([
 			...seriesDataUrls.map(url => fetch(url)),
@@ -90,6 +90,7 @@ class Graph {
 
 			this.graphTimeSeries(header);
 			this.graphScatterPlot(header);
+			this.updateBackground();
 		});
 
 		Promise.all([
@@ -159,7 +160,9 @@ class Graph {
 				plotBorderWidth: 2,
 				events: {
 					redraw: () => this.onRedraw()
-				}
+				},
+				borderRadius: 5,
+				plotBackgroundColor: 'white',
 			},
 			title: {
 				text: chartTitle,
@@ -287,6 +290,8 @@ class Graph {
 				type: 'scatter',
 				plotBorderColor: 'black',
 				plotBorderWidth: 2,
+				borderRadius: 5,
+				plotBackgroundColor: 'white',
 			},
 			title: {
 				text: chartTitle,
@@ -371,6 +376,9 @@ class Graph {
 					this.dataIndex = i;
 					this.timeSeries.series[0].setData(this.timeSeries1Data[this.dataIndex]);
 					this.timeSeries.series[1].setData(this.timeSeries2Data[this.dataIndex]);
+
+					// Update background color
+					this.updateBackground();
 				}
 			});
 		}
@@ -415,6 +423,38 @@ class Graph {
 			useHTML: true,
 		});
 	}
+
+	updateBackground() {
+		let timeData1 = this.timeSeries1Data[this.dataIndex];
+		let timeData2 = this.timeSeries2Data[this.dataIndex];
+
+		// Calculate day difference since last update
+		let lastUpdate = Math.min(timeData1[timeData1.length - 1][0], timeData2[timeData2.length - 1][0]);
+		let daysDiff = (new Date().getTime() - lastUpdate) / (1000 * 3600 * 24);
+
+		// Choose color based on last update date
+		let color =
+			daysDiff > 30 ? '#d98686' :
+			daysDiff > 1  ? '#ffe48c' :
+			'white';
+
+		// Set section color
+		$('#' + this.sectionContainer).css('background-color', color);
+
+		// Set time series chart color
+		this.timeSeries.update({
+			chart: {
+				backgroundColor: color,
+			}
+		});
+
+		// Set scatter plot color
+		this.scatterPlot.update({
+			chart: {
+				backgroundColor: color,
+			}
+		});
+	}
 }
 
 
@@ -428,7 +468,7 @@ function getMarkersData(data) {
 		let line = d.split(',');
 
 		return {
-			name: 'RMSD: ' + parseFloat(line[2]).toFixed(1),
+			name: 'RMSD: ' + parseFloat(line[2]).toFixed(1) + ' cm/s',
 			rmsd: parseFloat(line[2]),
 			lng: parseFloat(line[0]),
 			lat: parseFloat(line[1]),
