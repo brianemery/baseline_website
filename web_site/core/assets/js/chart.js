@@ -16,8 +16,10 @@ const mapDataUrls = [
 	'https://raw.githubusercontent.com/brianemery/baseline_website/master/test_data/lonlat05.csv',
 ];
 
+const siteMarkerUrl = 'https://raw.githubusercontent.com/brianemery/baseline_website/master/test_data/site_markers.csv';
+
 function main() {
-	let graph = new Graph([seriesDataUrls, mapAxisUrl, mapDataUrls], ['container1', 'container2', 'map']);
+	let graph = new Graph([seriesDataUrls, mapAxisUrl, mapDataUrls, siteMarkerUrl], ['container1', 'container2', 'map']);
 	console.log(graph);
 }
 
@@ -36,7 +38,7 @@ class Graph {
 		this.mapData = [];
 		this.scatterLegend = null;
 
-		let [ seriesDataUrls, mapAxisUrl, mapDataUrls ] = urls;
+		let [ seriesDataUrls, mapAxisUrl, mapDataUrls, siteMarkerUrl ] = urls;
 		[ this.timeSeriesContainer, this.scatterPlotContainer, this.mapContainer ] = containers;
 
 		Promise.all([
@@ -92,11 +94,17 @@ class Graph {
 
 		Promise.all([
 			fetch(mapAxisUrl),
+			fetch(siteMarkerUrl),
 			...mapDataUrls.map(url => fetch(url)),
 		])
 		.then(async res => {
 			let axisData = res.shift();
 			let axisRange = getAxisRange(await axisData.text());
+
+			let siteMarkers = (await res.shift().text()).split('\n');
+			siteMarkers.shift();
+			siteMarkers.pop();
+			siteMarkers = getSiteMarkersData(siteMarkers);
 
 			for (let i in res) {
 				let text = await res[i].text();
@@ -109,6 +117,7 @@ class Graph {
 				this.mapData.push(...coord);
 			}
 
+			this.mapData.push(...siteMarkers);
 			this.graphMapPlot(axisRange);
 		});
 	}
@@ -314,42 +323,55 @@ class Graph {
 
 		this.map = new google.maps.Map(document.getElementById(this.mapContainer), {
 			center:new google.maps.LatLng((minLat + maxLat) / 2.0, (minLng + maxLng) / 2.0),
-			zoom: 9,
+			zoom: 8,
 			mapTypeId: google.maps.MapTypeId.TERRAIN
 		});
 
 		this.infowindow = new google.maps.InfoWindow();
 
 
-		let rmsds = this.mapData.map(d => d.rmsd);
+		let rmsds = this.mapData.map(d => d.rmsd).filter(r => r != undefined);
 		let min = Math.min(...rmsds);
 		let max = Math.max(...rmsds);
 
 		for (let i in this.mapData) {
 			let markerData = this.mapData[i];
 
-			const marker = new google.maps.Marker({
-				position: {lat: markerData.lat, lng: markerData.lng},
-				map: this.map,
-				title: markerData.rmsd + '',
-				icon: {
+			let icon =
+				markerData.rmsd ?
+				{
 					path: google.maps.SymbolPath.CIRCLE,
 					scale: 8.5,
 					fillColor: percentToColor(markerData.rmsd, min, max),
 					fillOpacity: 1,
 					strokeWeight: 0
-				},
+				}
+				:
+				{
+					path: "M 0 0 L 5 -9 L 10 0 L 0 0",
+					scale: 2,
+					fillColor: '#febd00',
+					fillOpacity: 1,
+					strokeWeight: 1
+				};
+
+			const marker = new google.maps.Marker({
+				position: { lat: markerData.lat, lng: markerData.lng },
+				map: this.map,
+				title: markerData.rmsd + '',
+				icon,
 			});
 
 			google.maps.event.addListener(marker, 'click', () => {
-				this.infowindow.setContent(markerData.rmsd + '');
+				this.infowindow.setContent(markerData.name + '');
 				this.infowindow.open(this.map, marker);
 
 				// Change data on marker click
-				console.log(i);
-				this.dataIndex = i;
-				this.timeSeries.series[0].setData(this.timeSeries1Data[this.dataIndex]);
-				this.timeSeries.series[1].setData(this.timeSeries2Data[this.dataIndex]);
+				if (i < this.timeSeries1Data.length) {
+					this.dataIndex = i;
+					this.timeSeries.series[0].setData(this.timeSeries1Data[this.dataIndex]);
+					this.timeSeries.series[1].setData(this.timeSeries2Data[this.dataIndex]);
+				}
 			});
 		}
 	}
@@ -406,9 +428,22 @@ function getMarkersData(data) {
 		let line = d.split(',');
 
 		return {
+			name: 'RMSD: ' + parseFloat(line[2]).toFixed(1),
 			rmsd: parseFloat(line[2]),
 			lng: parseFloat(line[0]),
 			lat: parseFloat(line[1]),
+		};
+	});
+}
+
+function getSiteMarkersData(data) {
+	return data.map(d => {
+		let line = d.split(',');
+
+		return {
+			name: 'Site Name: ' + line[0],
+			lng: parseFloat(line[1]),
+			lat: parseFloat(line[2]),
 		};
 	});
 }
