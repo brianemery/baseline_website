@@ -170,7 +170,15 @@ class Graph {
 			xAxis: {
 				type: 'datetime',
 				title: {
-					text: header[0]
+					text: header[0],
+					style: {
+						color: 'black'
+					},
+				},
+				labels: {
+					style: {
+						color: 'black'
+					},
 				},
 				dateTimeLabelFormats: {
 					minute: '%l %p',
@@ -186,7 +194,15 @@ class Graph {
 			},
 			yAxis: {
 				title: {
-					text: 'cm/s'
+					text: 'cm/s',
+					style: {
+						color: 'black'
+					},
+				},
+				labels: {
+					style: {
+						color: 'black'
+					},
 				},
 				opposite: false,
 				minorTickInterval: undefined,
@@ -297,14 +313,35 @@ class Graph {
 				text: chartTitle,
 				AxisTypeValue: 'linear'
 			},
+			subtitle: {
+				style: {
+					color: 'black'
+				},
+			},
 			xAxis: {
 				title: {
-					text: header[1]
+					text: header[1],
+					style: {
+						color: 'black'
+					},
+				},
+				labels: {
+					style: {
+						color: 'black'
+					},
 				},
 			},
 			yAxis: {
 				title: {
-					text: header[2]
+					text: header[2],
+					style: {
+						color: 'black'
+					},
+				},
+				labels: {
+					style: {
+						color: 'black'
+					},
 				},
 				opposite: false,
 				minorTickInterval: undefined,
@@ -434,8 +471,8 @@ class Graph {
 
 		// Choose color based on last update date
 		let color =
-			daysDiff > 30 ? '#d98686' :
-			daysDiff > 1  ? '#ffe48c' :
+			daysDiff > 7 ? '#d98686' :
+			daysDiff > 1 ? '#ffe48c' :
 			'white';
 
 		// Set section color
@@ -445,7 +482,7 @@ class Graph {
 		this.timeSeries.update({
 			chart: {
 				backgroundColor: color,
-			}
+			},
 		});
 
 		// Set scatter plot color
