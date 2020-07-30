@@ -1,3 +1,6 @@
+const RMSD_COLORS = ['#0000ff', '#001bf2', '#0033e6', '#004cd9', '#0066cc', '#007fbf', '#0098b3', '#01b3a6', '#00cc99', '#00e78c'];
+
+
 const seriesDataUrls = [
 	'https://raw.githubusercontent.com/brianemery/baseline_website/master/test_data/test_series01.csv',
 	'https://raw.githubusercontent.com/brianemery/baseline_website/master/test_data/test_series02.csv',
@@ -372,9 +375,9 @@ class Graph {
 		this.infowindow = new google.maps.InfoWindow();
 
 
-		let rmsds = this.mapData.map(d => d.rmsd).filter(r => r != undefined);
-		let min = Math.min(...rmsds);
-		let max = Math.max(...rmsds);
+		// let rmsds = this.mapData.map(d => d.rmsd).filter(r => r != undefined);
+		// let min = Math.min(...rmsds);
+		// let max = Math.max(...rmsds);
 
 		for (let i in this.mapData) {
 			let markerData = this.mapData[i];
@@ -384,7 +387,7 @@ class Graph {
 				{
 					path: google.maps.SymbolPath.CIRCLE,
 					scale: 8.5,
-					fillColor: percentToColor(markerData.rmsd, min, max),
+					fillColor: rmsdToColor(markerData.rmsd),
 					fillOpacity: 1,
 					strokeWeight: 0
 				}
@@ -532,6 +535,10 @@ function percentToColor(val, minVal, maxVal) {
 	let max = 70;
 	let blue = 140;
 	return `rgb(${ max * percent + min }, ${ max * percent + min }, ${ blue })`;
+}
+
+function rmsdToColor(val) {
+	return RMSD_COLORS[Math.floor(val / 3.0)];
 }
 
 function getDate(str) {
