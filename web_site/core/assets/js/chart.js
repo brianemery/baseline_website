@@ -369,7 +369,7 @@ class Graph {
 		this.map = new google.maps.Map(document.getElementById(this.mapContainer), {
 			center:new google.maps.LatLng((minLat + maxLat) / 2.0, (minLng + maxLng) / 2.0),
 			zoom: 8,
-			mapTypeId: google.maps.MapTypeId.TERRAIN
+			mapTypeId: google.maps.MapTypeId.SATELLITE
 		});
 
 		this.infowindow = new google.maps.InfoWindow();
@@ -389,15 +389,25 @@ class Graph {
 					scale: 8.5,
 					fillColor: rmsdToColor(markerData.rmsd),
 					fillOpacity: 1,
-					strokeWeight: 0
+					strokeWeight: 0,
 				}
 				:
 				{
-					path: "M 0 0 L 5 -9 L 10 0 L 0 0",
+					path: "M -5 5 L 0 -5 L 5 5 L -5 5",
 					scale: 2,
 					fillColor: '#febd00',
 					fillOpacity: 1,
-					strokeWeight: 1
+					strokeWeight: 1,
+				    labelOrigin: new google.maps.Point(0, 10)
+				};
+
+			let label =
+				markerData.rmsd ? null :
+				{
+					color: '#febd00',
+					fontWeight: 'bold',
+					fontSize: '14px',
+					text: markerData.name,
 				};
 
 			const marker = new google.maps.Marker({
@@ -405,6 +415,7 @@ class Graph {
 				map: this.map,
 				title: markerData.rmsd + '',
 				icon,
+				label,
 			});
 
 			google.maps.event.addListener(marker, 'click', () => {
@@ -521,7 +532,7 @@ function getSiteMarkersData(data) {
 		let line = d.split(',');
 
 		return {
-			name: 'Site Name: ' + line[0],
+			name: line[0],
 			lng: parseFloat(line[1]),
 			lat: parseFloat(line[2]),
 		};
