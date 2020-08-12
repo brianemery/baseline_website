@@ -22,7 +22,7 @@ const mapDataUrls = [
 const siteMarkerUrl = 'https://raw.githubusercontent.com/brianemery/baseline_website/master/test_data/site_markers.csv';
 
 function main() {
-	let graph = new Graph([seriesDataUrls, mapAxisUrl, mapDataUrls, siteMarkerUrl], ['section1', 'container1', 'container2', 'map']);
+	let graph = new Graph([seriesDataUrls, mapAxisUrl, mapDataUrls, siteMarkerUrl], ['section', 'time-plot', 'scatter-plot', 'map']);
 	console.log(graph);
 }
 
