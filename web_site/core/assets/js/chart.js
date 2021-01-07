@@ -1,25 +1,34 @@
 const RMSD_COLORS = ['#0000ff', '#001bf2', '#0033e6', '#004cd9', '#0066cc', '#007fbf', '#0098b3', '#01b3a6', '#00cc99', '#00e78c'];
 
+var sitename = window.location.pathname.split("/").pop().split('.html').shift();
 
 const seriesDataUrls = [
-	'https://raw.githubusercontent.com/brianemery/baseline_website/master/test_data/test_series01.csv',
-	'https://raw.githubusercontent.com/brianemery/baseline_website/master/test_data/test_series02.csv',
-	'https://raw.githubusercontent.com/brianemery/baseline_website/master/test_data/test_series03.csv',
-	'https://raw.githubusercontent.com/brianemery/baseline_website/master/test_data/test_series04.csv',
-	'https://raw.githubusercontent.com/brianemery/baseline_website/master/test_data/test_series05.csv',
+	'https://hfradar.msi.ucsb.edu/baseline/' + sitename + '/time_series01.csv',
+        'https://hfradar.msi.ucsb.edu/baseline/' + sitename + '/time_series02.csv',
+        'https://hfradar.msi.ucsb.edu/baseline/' + sitename + '/time_series03.csv',
+        'https://hfradar.msi.ucsb.edu/baseline/' + sitename + '/time_series04.csv',
+        'https://hfradar.msi.ucsb.edu/baseline/' + sitename + '/time_series05.csv',
+        'https://hfradar.msi.ucsb.edu/baseline/' + sitename + '/time_series06.csv',
+        'https://hfradar.msi.ucsb.edu/baseline/' + sitename + '/time_series07.csv',
+        'https://hfradar.msi.ucsb.edu/baseline/' + sitename + '/time_series08.csv',
+        'https://hfradar.msi.ucsb.edu/baseline/' + sitename + '/time_series09.csv',
 ];
 
-const mapAxisUrl = 'https://raw.githubusercontent.com/brianemery/baseline_website/master/test_data/map_axis.csv';
+const mapAxisUrl = 'https://hfradar.msi.ucsb.edu/baseline/' + sitename + '/map_axis.csv';
 
 const mapDataUrls = [
-	'https://raw.githubusercontent.com/brianemery/baseline_website/master/test_data/lonlat01.csv',
-	'https://raw.githubusercontent.com/brianemery/baseline_website/master/test_data/lonlat02.csv',
-	'https://raw.githubusercontent.com/brianemery/baseline_website/master/test_data/lonlat03.csv',
-	'https://raw.githubusercontent.com/brianemery/baseline_website/master/test_data/lonlat04.csv',
-	'https://raw.githubusercontent.com/brianemery/baseline_website/master/test_data/lonlat05.csv',
+	'https://hfradar.msi.ucsb.edu/baseline/' + sitename + '/lonlat01.csv',
+	'https://hfradar.msi.ucsb.edu/baseline/' + sitename + '/lonlat02.csv',
+	'https://hfradar.msi.ucsb.edu/baseline/' + sitename + '/lonlat03.csv',
+	'https://hfradar.msi.ucsb.edu/baseline/' + sitename + '/lonlat04.csv',
+	'https://hfradar.msi.ucsb.edu/baseline/' + sitename + '/lonlat05.csv',
+	'https://hfradar.msi.ucsb.edu/baseline/' + sitename + '/lonlat06.csv',
+	'https://hfradar.msi.ucsb.edu/baseline/' + sitename + '/lonlat07.csv',
+	'https://hfradar.msi.ucsb.edu/baseline/' + sitename + '/lonlat08.csv',
+	'https://hfradar.msi.ucsb.edu/baseline/' + sitename + '/lonlat09.csv',
 ];
 
-const siteMarkerUrl = 'https://raw.githubusercontent.com/brianemery/baseline_website/master/test_data/site_markers.csv';
+const siteMarkerUrl = 'https://hfradar.msi.ucsb.edu/baseline/' + sitename + '/site_markers.csv';
 
 function main() {
 	let graph = new Graph([seriesDataUrls, mapAxisUrl, mapDataUrls, siteMarkerUrl], ['section', 'time-plot', 'scatter-plot', 'map']);
