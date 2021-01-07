@@ -1,13 +1,13 @@
 <!doctype html>
 <html lang="en">
 <head>
-	<meta charset="utf-8" />
-	<link rel="icon" type="image/png" href="assets/img/favicon.ico">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/png" href="assets/img/favicon.ico">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 
-	<title>Dashboard</title>
-
-	<meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+    <title>Dashboard</title>
+    
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
     <meta name="viewport" content="width=device-width" />
 
 
@@ -21,14 +21,14 @@
     <link href="assets/css/light-bootstrap-dashboard.css?v=1.4.0" rel="stylesheet"/>
 
 
-    <!--  CSS for Demo Purpose, don't include it in your project     -->
-    <!-- <link href="assets/css/demo.css" rel="stylesheet" /> -->
-
+    <!-- Chart and map styling -->
+    <link href="assets/css/chart.css" rel="stylesheet"/>
 
     <!--     Fonts and icons     -->
     <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
     <link href='http://fonts.googleapis.com/css?family=Roboto:400,700,300' rel='stylesheet' type='text/css'>
     <link href="assets/css/pe-icon-7-stroke.css" rel="stylesheet" />
+
 
 </head>
 <body>
@@ -38,12 +38,13 @@
 
     	<div class="sidebar-wrapper">
             <div class="logo">
-                <a href="http://hfradar.msi.ucsb.edu/comparisons_beta/dashboard.html" class="simple-text">
+                <a href="http://hfradar.msi.ucsb.edu/comparisons/dashboard.html" class="simple-text">
                     HFR QC
                 </a>
             </div>
 
-            <ul class="nav">                <li class="active">
+            <ul class="nav">
+                <li class="active">
                      <a href="aoos.html">
                          <i class="pe-7s-graph"></i>
                          <p>AOOS</p>
@@ -99,6 +100,74 @@
                      </a>
                 </li> 
 
+                     <a href="csw.html">
+                         <p>CSW</p>
+                     </a>
+
+                     <a href="gtn.html">
+                         <p>GTN</p>
+                     </a>
+
+                     <a href="sdbp.html">
+                         <p>SDBP</p>
+                     </a>
+
+                     <a href="sdci.html">
+                         <p>SDCI</p>
+                     </a>
+
+                     <a href="sdcp.html">
+                         <p>SDCP</p>
+                     </a>
+
+                     <a href="sddp.html">
+                         <p>SDDP</p>
+                     </a>
+
+                     <a href="sdpl.html">
+                         <p>SDPL</p>
+                     </a>
+
+                     <a href="sdsc.html">
+                         <p>SDSC</p>
+                     </a>
+
+                     <a href="sdse.html">
+                         <p>SDSE</p>
+                     </a>
+
+                     <a href="sdsl.html">
+                         <p>SDSL</p>
+                     </a>
+
+                     <a href="sdut.html">
+                         <p>SDUT</p>
+                     </a>
+
+                     <a href="sdww.html">
+                         <p>SDWW</p>
+                     </a>
+
+                     <a href="con.html">
+                         <p>CON</p>
+                     </a>
+
+                     <a href="qta.html">
+                         <p>QTA</p>
+                     </a>
+
+                     <a href="sau.html">
+                         <p>SAU</p>
+                     </a>
+
+                     <a href="uabc.html">
+                         <p>UABC</p>
+                     </a>
+
+                     <a href="vil.html">
+                         <p>VIL</p>
+                     </a>
+
                      <a href="cop1.html">
                          <p>COP1</p>
                      </a>
@@ -131,6 +200,10 @@
                          <p>SSD1</p>
                      </a>
 
+                     <a href="scci.html">
+                         <p>SCCI</p>
+                     </a>
+
                      <a href="scdb.html">
                          <p>SCDB</p>
                      </a>
@@ -139,16 +212,16 @@
                          <p>SCDH</p>
                      </a>
 
-                     <a href="sddp.html">
-                         <p>SDDP</p>
+                     <a href="scnb.html">
+                         <p>SCNB</p>
                      </a>
 
-                     <a href="sdsc.html">
-                         <p>SDSC</p>
+                     <a href="scpf.html">
+                         <p>SCPF</p>
                      </a>
 
-                     <a href="sdww.html">
-                         <p>SDWW</p>
+                     <a href="sctb.html">
+                         <p>SCTB</p>
                      </a>
 
                 <li class="active">
@@ -279,8 +352,9 @@
     <!-- Light Bootstrap Table Core javascript and methods for Demo purpose -->
 	<script src="assets/js/light-bootstrap-dashboard.js?v=1.4.0"></script>
 
-	<!-- Light Bootstrap Table DEMO methods, don't include it in your project! -->
-	<!-- <script src="assets/js/demo.js"></script> -->
 
-
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCKQvPzyzh86KWxZ0kt2iKfcMUoXBfVjxE" type="text/javascript"></script>
+    <script src="https://code.highcharts.com/stock/highstock.js"></script>
+    <script src="assets/js/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/regression/1.4.0/regression.min.js"></script>
 </html>
