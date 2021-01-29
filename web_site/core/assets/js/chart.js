@@ -1,6 +1,6 @@
 const RMSD_COLORS = ['#0000ff', '#001bf2', '#0033e6', '#004cd9', '#0066cc', '#007fbf', '#0098b3', '#01b3a6', '#00cc99', '#00e78c'];
 
-var sitename = window.location.pathname.split("/").pop().split('.html').shift();
+var sitename = window.location.pathname.split("/").pop().split('.html').shift().toUpperCase();
 
 const seriesDataUrls = [
 	'https://hfradar.msi.ucsb.edu/baseline/' + sitename + '/time_series01.csv',
