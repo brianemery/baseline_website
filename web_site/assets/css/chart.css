@@ -1,0 +1,92 @@
+.section {
+	border-radius: 5px;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+	margin-bottom: 20px;
+	position: relative;
+}
+
+.main-content {
+	padding: 0px;
+	padding-top: 10px;
+}
+
+.time-plot {
+	height: 400px;
+}
+
+#divide {
+	display: none;
+}
+
+.horizontal {
+	display: flex;
+	justify-content: space-between;
+	flex-direction: row;
+	overflow: hidden;
+}
+
+.scatter-plot {
+	height: 400px;
+	width: 50%;
+}
+
+.map {
+	/*height: 320px;*/
+	width: 45%;
+	margin: 20px;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.rmsd-scale {
+	margin-top: 20px;
+	margin-right: 20px;
+	width: 50px;
+	height: 200px;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+#panel {
+	display: none;
+}
+
+@media only screen and (max-width: 600px) {
+	.content {
+		width: 100%;
+	}
+
+	.navbar-header {
+		width: 100vw;
+	}
+
+	.time-plot {
+		margin-bottom: 20px;
+	}
+
+	#divide {
+		display:none;
+		color: gray;
+		width: 90%;
+		border-top: 6px solid #8c8b8b;
+	}
+	
+	.horizontal {
+		flex-direction: column;
+	}
+
+	.scatter-plot {
+		height: 350px;
+		width: 90%;
+	}
+	
+	.map {
+		height: 250px;
+		width: 90%;
+		margin: 5%;
+		box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+	}
+	
+	.rmsd-scale {
+		display: none;
+	}
+
+}
