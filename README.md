@@ -5,8 +5,9 @@ https://hfradar.msi.ucsb.edu/comparisons/
 Dev site hosted on Github pages: http://hdinh.tech/hfr-baseline-site
 
 Developers:
-  Brian Emery
 
   Heather Dinh
 
   Wei Tung Chen
+
+  Brian Emery
