@@ -29,7 +29,6 @@
     <link href='http://fonts.googleapis.com/css?family=Roboto:400,700,300' rel='stylesheet' type='text/css'>
     <link href="assets/css/pe-icon-7-stroke.css" rel="stylesheet" />
 
-
 </head>
 <body>
 
@@ -38,7 +37,7 @@
 
     	<div class="sidebar-wrapper">
             <div class="logo">
-                <a href="#" class="simple-text">
+                <a href="#" name="INDEX 1 9 0" onclick="setSite(this.name)" class="simple-text">
                     HFR QC
                 </a>
             </div>
@@ -57,7 +56,7 @@
                     </a>
                </li> 
                <div id="panel">
-                   <a href="#" name="PBRW 0 0 0" onclick="setSite(this.name)"><p>PBRW</p></a>
+                   <a href="#" name="PBRW 1 9 0" onclick="setSite(this.name)"><p>PBRW</p></a>
                    <a href="#" name="WAIN 0 0 0" onclick="setSite(this.name)"><p>WAIN</p></a>
                </div>
 
@@ -141,7 +140,7 @@
                 <div id="panel">
                     <a href="#" name="NANT 0 0 0" onclick="setSite(this.name)"><p>NANT</p></a>
                     <a href="#" name="MVCO 0 0 0" onclick="setSite(this.name)"><p>MVCO</p></a>
-                    <a href="#" name="BLCK 1 2 0" onclick="setSite(this.name)"><p>BLCK</p></a>
+                    <a href="#" name="BLCK 1 9 0" onclick="setSite(this.name)"><p>BLCK</p></a>
                     <a href="#" name="AMAG 2 0 9" onclick="setSite(this.name)"><p>AMAG</p></a>
                     <a href="#" name="MRCH 2 0 9" onclick="setSite(this.name)"><p>MRCH</p></a>
                     <a href="#" name="HEMP 12 3 9" onclick="setSite(this.name)"><p>HEMP</p></a>
@@ -313,7 +312,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="#">Dashboard</a>
+                    <a class="navbar-brand" href="#" name="INDEX 1 9 0" onclick="setSite(this.name)">Dashboard</a>
                 </div>
                 <div class="collapse navbar-collapse">
                     <ul class="nav navbar-nav navbar-right">
@@ -342,16 +341,96 @@
         <!-- SITE_BODY.HTML TEMPLATE MODS INSERT HERE -->
         <!-- XXXXX --> 
                     <div class="col-md-12">
+                        <div class="card" id="dashboard">
+                            <div class="header">
+                                <h4 class="title">High Frequency Radar Quality Control Site</h4>
+                            </div>
+                            <hr id="divider">
+                            <div class="content" id="content-dashboard">                             
+                                <h5><strong>Introduction</strong></h5>
+                                <p>Welcome to the radial comparison website! The over-arching goal of this website is to improve the data
+                                    quality of the high-frequency (HF) radars comprising the Surface Current Mapping Network of the NOAA Integrated
+                                    Ocean Observing System (NOAA IOOS). The approach for achieving this goal is to provide operational, real-time
+                                    comparisons of radial current velocities (hereafter radials) from all HF radars in the network with
+                                    overlapping coverage. Radars with overlapping coverage
+                                    are grouped into two categories: (1) <i>baseline comparisons</i> in which radials are measured over
+                                    straight lines connecting pairs of radars and, (2) <i>synthetic radials</i> in which two or more radars capable generate radials to
+                                    compare with directly measured radials from another site.
+                                    <br><br>
+                                    The fundamental assumption underlying the approach is that if radar sites can be configured such that they achieve
+                                    high correlations and low RMS differences in radials among radars in baseline and synthetic radial comparisons, the
+                                    result will be higher quality, more accurate total vectors that are derived from the radials. A challenge will be
+                                    determining how to adjust radar hardware and software to increase correlation and decrease RMS differences among
+                                    radials.
+                                    <br><br>
+                                    These automated real-time comparisons provide metrics for HF radar operators to efficiently and objectively monitor
+                                    the quality and consistency of the data from HF radars that they maintain. We intend that these metrics may also be
+                                    used by regional associations, program managers and NOAA officials to assess network status and function.
+                                </p>
+                                <br>
+                                <h5><strong>Website Overview</strong></h5>
+                                <p>
+                                    The basis for comparisons are independent measures of velocity. The simplest example occurs when two radars look at
+                                    the same patch of ocean from opposite directions. These radars make independent measurements of the radial current
+                                    component which can be compared. The statistical measures of agreement can be used to inform Quality Assurance and
+                                    Quality Control activities (QAQC).
+                                    <br><br>
+                                    When overwater baselines are not available, such as for radars situated along a straight coastline, we can sometimes
+                                    use two of the radars to estimate (that is, synthesize) the radial component that is observed at the third site.
+                                    These <i>synthetic radials</i> are computed from nearly orthogonal components from the two sites.
+                                    <br><br>
+                                    Maps show the HF radar sites involved in the comparison (yellow triangles), and the (clickable) ocean patches in
+                                    between them that are available for comparison (circular dots). The color bar (right) associates the dot colors with
+                                    the overall RMS difference between the time series.
+                                    <br><br>
+                                </p>
+                                    <div>
+                                        <img class="nic1-map" src="assets/img/nic1_map.JPG" />
+                                        &nbsp;
+                                        <img class="rmsd-scale" src="assets/img/rmsd_scale.png"/>
+                                    </div>
+                                <p>
+                                    <br><br>
+                                    Clicking on a dot will bring up the time series from that location, along with the scatterplot of the time series data. 
+                                    <br><br>
+                                </p>
+                                        <div id="time-plot-dash" class="time-plot"></div>
+                                <p>
+                                    <br><br>
+                                    Changing the time range generates corresponding changes in the scatterplot and the statistics that are computed from the scatterplot data.
+                                    <br><br>
+                                </p>
+                                    <div id="scatter-plot-dash" class="scatter-plot"></div>
+                                    <br><br>
+                                <h5><strong>Other Details</strong></h5>
+                                <p>
+                                    A <span style="background-color: #ffe48c;">yellow background</span> indicates that the data is more than 1 day old, 
+                                    and a <span style="background-color:#d98686">red background</span> indicates that the data is
+                                    more than 1 week old.
+                                </p>
+                                <br>
+                                
+                                <h5><strong>Website Credits</strong></h5>
+                                <p>
+                                    Heather Dinh
+                                    <br>
+                                    Wei Tung Chen
+                                    <br>
+                                    Brian Emery
+                                </p>                                
+                            </div>
+                        </div>
+
                         <div class="card" id="card-1">
                             <div class="header">
                                 <h4 class="title">Baseline Radial Comparison</h4>
                                 <p class="category" id="category1">info</p>
                             </div>
                             <div class="content" id="content-1">
-                                <div class="section" id="chart1">
+                                <div class="section" id="chart-1">
                                     <div id="time-plot-1" class="time-plot"></div>
                                     <hr id="divide">
-                                    <div class="horizontal">
+                                    <div class="horizontal" id="horizontal-1">
                                         <div id="scatter-plot-1" class="scatter-plot"></div>
                                         <div id="map-1" class="map"></div>
                                         <img class="rmsd-scale" src="assets/img/rmsd_scale.png"/>
@@ -365,10 +444,10 @@
                                 <p class="category" id="category2">info</p>
                             </div>
                             <div class="content" id="content-2">
-                                <div class="section" id="chart2">
+                                <div class="section" id="chart-2">
                                     <div id="time-plot-2" class="time-plot"></div>
                                     <hr id="divide">
-                                    <div class="horizontal">
+                                    <div class="horizontal" id="horizontal-2">
                                         <div id="scatter-plot-2" class="scatter-plot"></div>
                                         <div id="map-2" class="map"></div>
                                         <img class="rmsd-scale" src="assets/img/rmsd_scale.png"/>
@@ -407,4 +486,8 @@
     <script src="https://code.highcharts.com/stock/highstock.js"></script>
     <script src="assets/js/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/regression/1.4.0/regression.min.js"></script>
+
+    <script>
+        setSite("INDEX 1 9 0");
+    </script>
 </html>

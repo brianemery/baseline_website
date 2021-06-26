@@ -1,6 +1,7 @@
 const RMSD_COLORS = ['#0000ff', '#001bf2', '#0033e6', '#004cd9', '#0066cc', '#007fbf', '#0098b3', '#01b3a6', '#00cc99', '#00e78c'];
 
 var sitename = "INDEX";
+var temp;
 var baselineSeriesDataUrls;
 var baselineMapAxisUrl;
 var baselineMapDataUrls;
@@ -11,9 +12,18 @@ var syntheticMapDataUrls;
 var syntheticSiteMarkerUrl;
 var numGraphs;
 
+function toggle(name) {
+	if(document.getElementById(name).style.display == "block") {
+		document.getElementById(name).style.dispay = "none";
+	}else {
+		document.getElementById(name).style.display == "block";
+	}
+}
+
 function setSite(n) {
 	var string = n.split(" ");
-	sitename = string[0];
+	temp = string[0];
+	temp == "INDEX" ? sitename = "NIC1" : sitename = temp;
 	numGraphs = string[1];
 	numFilesBaseline = string[2];
 	numFilesSynthetic = string[3];
@@ -26,6 +36,15 @@ function setSite(n) {
 		baselineSeriesDataUrls.push(cur1);
 		baselineMapDataUrls.push(cur2);
 	}
+
+	/*
+	for(var i = 1; i <= 9; i++) {
+		let cur1 = 'https://hfradar.msi.ucsb.edu/baseline/' + sitename + '/time_series0' + i + '.csv';
+		let cur2 = 'https://hfradar.msi.ucsb.edu/baseline/' + sitename + '/lonlat0' + i + '.csv';
+		baselineSeriesDataUrls.push(cur1);
+		baselineMapDataUrls.push(cur2);
+	}
+	*/
 
 	baselineMapAxisUrl = 'https://hfradar.msi.ucsb.edu/baseline/' + sitename + '/map_axis.csv';
 	baselineSiteMarkerUrl = 'https://hfradar.msi.ucsb.edu/baseline/' + sitename + '/site_markers.csv';
@@ -43,42 +62,54 @@ function setSyntheticUrls() {
 		syntheticMapDataUrls.push(cur2);
 	}
 
+	/*
+	for(var i = 1; i <= 9; i++) {
+		let cur1 = 'https://hfradar.msi.ucsb.edu/synthetic/' + sitename + '/time_series0' + i + '.csv';
+		let cur2 = 'https://hfradar.msi.ucsb.edu/synthetic/' + sitename + '/lonlat0' + i + '.csv';
+		syntheticSeriesDataUrls.push(cur1);
+		syntheticMapDataUrls.push(cur2);
+	}
+	*/
+
 	syntheticMapAxisUrl = 'https://hfradar.msi.ucsb.edu/synthetic/' + sitename + '/map_axis.csv';
 	syntheticSiteMarkerUrl = 'https://hfradar.msi.ucsb.edu/synthetic/' + sitename + '/site_markers.csv';
 }
 
 function setDisplay(card1, chart1, card2, chart2) {
 	document.getElementById("card-1").style.display = card1;
-	document.getElementById("chart1").style.display = chart1;
+	document.getElementById("chart-1").style.display = chart1;
 	document.getElementById("card-2").style.display = card2;
-	document.getElementById("chart2").style.display = chart2;
+	document.getElementById("chart-2").style.display = chart2;
 }
 
 function main() {
-	if(sitename == "INDEX") {
-		document.getElementById("card-1").style.display = "none";
-		document.getElementById("card-2").style.display = "none";
-		return;
-	}
-
 	let baselineGraph = null;
 	let syntheticGraph = null;
 
+	if(temp == "INDEX") {
+		document.getElementById("dashboard").style.display = "block";
+		document.getElementById("card-1").style.display = "none";
+		document.getElementById("card-2").style.display = "none";
+		baselineGraph = new Graph([baselineSeriesDataUrls, baselineMapAxisUrl, baselineMapDataUrls, baselineSiteMarkerUrl], ['chart-dash', 'time-plot-dash', 'scatter-plot-dash', 'map-dash']);
+		return;
+	}
+
+	document.getElementById("dashboard").style.display = "none";
 	
 	
 	if(Number.parseInt(numGraphs) == 0) {
 		setDisplay("block", "none", "none", "none");
 	}else if(Number.parseInt(numGraphs) == 1) {
-		baselineGraph = new Graph([baselineSeriesDataUrls, baselineMapAxisUrl, baselineMapDataUrls, baselineSiteMarkerUrl], ['chart1', 'time-plot-1', 'scatter-plot-1', 'map-1']);
+		baselineGraph = new Graph([baselineSeriesDataUrls, baselineMapAxisUrl, baselineMapDataUrls, baselineSiteMarkerUrl], ['chart-1', 'time-plot-1', 'scatter-plot-1', 'map-1']);
 		setDisplay("block", "block", "none", "none");
 	}else if(Number.parseInt(numGraphs) == 2) {
 		setSyntheticUrls();
-		syntheticGraph = new Graph([syntheticSeriesDataUrls, syntheticMapAxisUrl, syntheticMapDataUrls, syntheticSiteMarkerUrl], ['chart2', 'time-plot-2', 'scatter-plot-2', 'map-2']);
+		syntheticGraph = new Graph([syntheticSeriesDataUrls, syntheticMapAxisUrl, syntheticMapDataUrls, syntheticSiteMarkerUrl], ['chart-2', 'time-plot-2', 'scatter-plot-2', 'map-2']);
 		setDisplay("none", "none", "block", "block");
 	}else if(Number.parseInt(numGraphs) == 12) {
-		baselineGraph = new Graph([baselineSeriesDataUrls, baselineMapAxisUrl, baselineMapDataUrls, baselineSiteMarkerUrl], ['chart1', 'time-plot-1', 'scatter-plot-1', 'map-1']);
+		baselineGraph = new Graph([baselineSeriesDataUrls, baselineMapAxisUrl, baselineMapDataUrls, baselineSiteMarkerUrl], ['chart-1', 'time-plot-1', 'scatter-plot-1', 'map-1']);
 		setSyntheticUrls();
-		syntheticGraph = new Graph([syntheticSeriesDataUrls, syntheticMapAxisUrl, syntheticMapDataUrls, syntheticSiteMarkerUrl], ['chart2', 'time-plot-2', 'scatter-plot-2', 'map-2']);
+		syntheticGraph = new Graph([syntheticSeriesDataUrls, syntheticMapAxisUrl, syntheticMapDataUrls, syntheticSiteMarkerUrl], ['chart-2', 'time-plot-2', 'scatter-plot-2', 'map-2']);
 		setDisplay("block", "block", "block", "block");
 	}
 
@@ -194,6 +225,7 @@ class Graph {
 	graphTimeSeries(header) {
 		let chartTitle = 'Time Series Plot';
 
+		
 		let name1 = "";
 		let name2 = "";
 		if(this.labelNames.length == 2) {
@@ -598,10 +630,11 @@ class Graph {
 		let color =
 			daysDiff > 7 ? '#d98686' :
 			daysDiff > 1 ? '#ffe48c' :
-			'white';
+			'#ffffff';
 
-		// Set section color
+		// Set section colors
 		$('#' + this.sectionContainer).css('background-color', color);	
+		//document.getElementById(this.sectionContainer).style.backgroundColor = color;	
 
 		// Set time series chart color
 		this.timeSeries.update({

@@ -18,6 +18,15 @@
 	display: none;
 }
 
+#divider {
+	margin-top: 5;
+	margin-bottom: 0;
+}
+
+#picture {
+	scale: 80%;
+}
+
 .horizontal {
 	display: flex;
 	justify-content: space-between;
@@ -43,6 +52,10 @@
 	width: 50px;
 	height: 200px;
 	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.nic1-map {
+	width: 40vw;
 }
 
 #panel {
@@ -76,6 +89,10 @@
 	.scatter-plot {
 		height: 350px;
 		width: 90%;
+	}
+
+	.nic1-map {
+		width: 80vw;
 	}
 	
 	.map {
